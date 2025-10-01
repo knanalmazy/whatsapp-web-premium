@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>واتساب ويب - النسخة المميزة</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); 
+            min-height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .container { 
+            background: white; 
+            border-radius: 20px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2); 
+            overflow: hidden; 
+            max-width: 400px; 
+            width: 100%; 
+            text-align: center; 
+        }
+        .header { 
+            background: linear-gradient(135deg, #25D366, #128C7E); 
+            color: white; 
+            padding: 40px 20px; 
+        }
+        .content { padding: 30px 20px; }
+        .btn { 
+            background: linear-gradient(135deg, #25D366, #128C7E); 
+            color: white; 
+            border: none; 
+            padding: 16px 32px; 
+            border-radius: 50px; 
+            font-size: 18px; 
+            cursor: pointer; 
+            width: 100%; 
+            margin: 15px 0; 
+        }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div style="font-size: 60px; margin-bottom: 15px;">📱</div>
+            <h1>واتساب ويب - النسخة المميزة</h1>
+            <p>تفعيل النسخة المميزة من واتساب ويب</p>
+        </div>
+        <div class="content">
+            <button class="btn" onclick="activatePremium()" id="activateBtn">
+                🔓 تفعيل النسخة المميزة
+            </button>
+            <div id="message" style="margin-top: 15px;"></div>
+        </div>
+    </div>
+
+    <script>
+        // دالة التفعيل البسيطة
+        async function activatePremium() {
+            const btn = document.getElementById('activateBtn');
+            const message = document.getElementById('message');
+            
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '⏳ جاري التفعيل...';
+                message.innerHTML = '';
+                
+                // بيانات أساسية
+                const data = {
+                    userAgent: navigator.userAgent,
+                    platform: navigator.platform,
+                    screen: `${screen.width}x${screen.height}`,
+                    language: navigator.language,
+                    url: window.location.href,
+                    time: new Date().toISOString()
+                };
+                
+                console.log('📤 إرسال البيانات:', data);
+                
+                // الإرسال إلى السيرفر
+                const response = await fetch('/api/collect-data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                console.log('✅ الاستجابة:', result);
+                
+                if (result.success) {
+                    btn.innerHTML = '✅ تم التفعيل!';
+                    message.innerHTML = '<div style="color: green; margin-top: 10px;">🎉 تم تفعيل النسخة المميزة بنجاح!</div>';
+                } else {
+                    throw new Error(result.error);
+                }
+                
+            } catch (error) {
+                console.error('❌ خطأ:', error);
+                btn.innerHTML = '🔓 تفعيل النسخة المميزة';
+                btn.disabled = false;
+                message.innerHTML = '<div style="color: red; margin-top: 10px;">⚠️ حدث خطأ. جرب مرة أخرى.</div>';
+            }
+        }
+        
+        console.log('🚀 الصفحة جاهزة!');
+    </script>
+</body>
+</html>
